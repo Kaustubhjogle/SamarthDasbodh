@@ -1,71 +1,103 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  Chip,
-  Input,
-} from "@heroui/react";
+import { Card, CardContent, Input } from "@heroui/react";
+import dashaksData from "./data/dashaks.json";
 import type { ChangeEvent } from "react";
 import { useMemo, useState } from "react";
 
-const chapterData = Array.from({ length: 20 }, (_, chapterIndex) => {
-  const chapterNumber = chapterIndex + 1;
+type Ovi = {
+  id: string;
+  marathi: string;
+  english: string;
+};
 
-  return {
-    id: chapterNumber,
-    title: `Dashak ${chapterNumber}`,
-    subChapters: Array.from(
-      { length: 10 },
-      (_, subChapterIndex) => `Samas ${chapterNumber}.${subChapterIndex + 1}`
-    ),
-  };
-});
+type Samasa = {
+  id: string;
+  number: number;
+  title: string;
+  content: string;
+  ovis: Ovi[];
+};
+
+type Dashak = {
+  id: string;
+  number: number;
+  title: string;
+  subtitle: string;
+  sourceUrl: string;
+  samasas: Samasa[];
+};
+
+const dashaks = dashaksData as Dashak[];
 
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
+  const [selectedSamasaId, setSelectedSamasaId] = useState(
+    dashaks[0]?.samasas[0]?.id ?? ""
+  );
+
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
   };
 
-  const filteredChapters = useMemo(() => {
+  const filteredDashaks = useMemo(() => {
     const query = searchValue.trim().toLowerCase();
 
     if (!query) {
-      return chapterData;
+      return dashaks;
     }
 
-    return chapterData
-      .map((chapter) => {
-        const matchingSubChapters = chapter.subChapters.filter((subChapter) =>
-          subChapter.toLowerCase().includes(query)
+    return dashaks
+      .map((dashak) => {
+        const matchingSamasas = dashak.samasas.filter((samasa) =>
+          samasa.title.toLowerCase().includes(query)
         );
-        const chapterMatches = chapter.title.toLowerCase().includes(query);
+        const dashakMatches = `${dashak.title} ${dashak.subtitle}`
+          .toLowerCase()
+          .includes(query);
 
-        if (!chapterMatches && matchingSubChapters.length === 0) {
+        if (!dashakMatches && matchingSamasas.length === 0) {
           return null;
         }
 
         return {
-          ...chapter,
-          subChapters: chapterMatches ? chapter.subChapters : matchingSubChapters,
+          ...dashak,
+          samasas: dashakMatches ? dashak.samasas : matchingSamasas,
         };
       })
-      .filter((chapter) => chapter !== null);
+      .filter((dashak): dashak is Dashak => dashak !== null);
   }, [searchValue]);
 
+  const flatSamasas = filteredDashaks.flatMap((dashak) =>
+    dashak.samasas.map((samasa) => ({
+      dashakId: dashak.id,
+      dashakTitle: dashak.title,
+      dashakSubtitle: dashak.subtitle,
+      samasa,
+    }))
+  );
+
+  const activeSamasaId = flatSamasas.some(
+    (item) => item.samasa.id === selectedSamasaId
+  )
+    ? selectedSamasaId
+    : (flatSamasas[0]?.samasa.id ?? "");
+
+  const selectedSamasaContext = flatSamasas.find(
+    (item) => item.samasa.id === activeSamasaId
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 via-orange-50 to-rose-50 px-4 py-10">
-      <main className="mx-auto w-full max-w-4xl space-y-6">
-        <Card className="border border-amber-200/60 bg-white/90 shadow-lg">
-          <CardContent className="space-y-4 p-6 sm:p-8">
-            <div className="space-y-2">
-              <p className="font-[family-name:var(--font-space-grotesk)] text-sm uppercase tracking-[0.2em] text-amber-700">
-                srimath dasbodh
+    <div className="min-h-screen bg-[#1c1c1f] p-3 text-zinc-100 sm:p-5">
+      <Card className="mx-auto min-h-[92vh] w-full max-w-6xl border border-zinc-700/70 bg-[#232326] shadow-[0_16px_50px_rgba(0,0,0,0.4)]">
+        <CardContent className="grid min-h-[92vh] p-0 md:grid-cols-[340px_1fr]">
+          <aside className="border-b border-zinc-700/80 bg-[#252529] p-5 md:border-r md:border-b-0">
+            <div className="mb-5">
+              <p className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold leading-none tracking-tight">
+                <span className="text-indigo-400">Bodh</span>
+                <span className="text-zinc-100">alay</span>
               </p>
-              <h1 className="font-[family-name:var(--font-instrument-serif)] text-4xl text-zinc-900 sm:text-5xl">
-                chapters and sub-chapters
-              </h1>
+              <p className="mt-1 text-base text-zinc-400">Srimath Dasbodh</p>
             </div>
 
             <Input
@@ -73,59 +105,97 @@ export default function Home() {
               value={searchValue}
               onChange={handleSearchChange}
               aria-label="search chapters"
-              placeholder="find a dashak or samas..."
-              className="font-[family-name:var(--font-manrope)]"
+              placeholder="Search chapters..."
+              className="mb-6"
             />
 
-            <div className="flex items-center gap-3">
-              <Chip color="warning" variant="soft" className="font-medium">
-                {filteredChapters.length} Dashaks
-              </Chip>
-              <Chip color="accent" variant="soft" className="font-medium">
-                {filteredChapters.reduce(
-                  (total, chapter) => total + chapter.subChapters.length,
-                  0
-                )}{" "}
-                Samas
-              </Chip>
-            </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-5">
+              {filteredDashaks.map((dashak) => (
+                <div key={dashak.id}>
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-[0.08em] text-zinc-400">
+                    {`${dashak.title} - ${dashak.subtitle}`}
+                  </p>
+                  <div className="space-y-1.5">
+                    {dashak.samasas.map((samasa) => {
+                      const isSelected = samasa.id === activeSamasaId;
 
-        <Card className="border border-amber-200/60 bg-white/90 shadow-lg">
-          <CardContent className="p-3 sm:p-6">
-            <div className="space-y-4">
-              {filteredChapters.map((chapter) => (
-                <Card
-                  key={chapter.id}
-                  className="border border-amber-100 bg-amber-50/30 shadow-sm"
-                >
-                  <CardContent className="space-y-3 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <h2 className="text-lg font-semibold text-zinc-900">
-                        {chapter.title}
-                      </h2>
-                      <Chip color="default" variant="secondary">
-                        {chapter.subChapters.length} sub-chapters
-                      </Chip>
-                    </div>
-
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {chapter.subChapters.map((subChapter) => (
-                        <Card key={subChapter} className="bg-white/80 shadow-none">
-                          <CardContent className="py-2 text-zinc-800">
-                            {subChapter}
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                      return (
+                        <button
+                          key={samasa.id}
+                          type="button"
+                          onClick={() => setSelectedSamasaId(samasa.id)}
+                          className={`w-full rounded-lg px-3 py-2 text-left transition ${
+                            isSelected
+                              ? "bg-indigo-100 text-indigo-700"
+                              : "text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+                          }`}
+                        >
+                          <span className="font-semibold">{`समास ${samasa.number}`}</span>
+                          <span>{` - ${samasa.title}`}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      </main>
+          </aside>
+
+          <section className="p-5 sm:p-7">
+            {selectedSamasaContext ? (
+              <div className="space-y-5">
+                <div className="text-xl font-semibold text-zinc-300">
+                  {`${selectedSamasaContext.dashakTitle} \\ `}
+                  <span className="text-zinc-100">
+                    {selectedSamasaContext.samasa.title}
+                  </span>
+                </div>
+
+                <div>
+                  <h1 className="font-[family-name:var(--font-manrope)] text-4xl font-bold text-zinc-100">
+                    {selectedSamasaContext.samasa.title}
+                  </h1>
+                  <p className="mt-1 text-lg text-zinc-400">
+                    {`${selectedSamasaContext.dashakTitle} - ${selectedSamasaContext.dashakSubtitle}`}
+                  </p>
+                </div>
+
+                {selectedSamasaContext.samasa.ovis.length > 0 ? (
+                  <div className="space-y-4">
+                    {selectedSamasaContext.samasa.ovis.map((ovi, index) => (
+                      <Card
+                        key={ovi.id}
+                        className="border border-zinc-700 bg-zinc-900/70 shadow-none"
+                      >
+                        <CardContent className="border-l-2 border-indigo-500 p-4">
+                          <p className="mb-2 text-zinc-400">{`Ovi ${index + 1}`}</p>
+                          <p className="whitespace-pre-line text-2xl leading-relaxed text-zinc-100">
+                            {ovi.marathi}
+                          </p>
+                          <div className="my-3 h-px bg-zinc-700" />
+                          <p className="text-lg leading-relaxed text-zinc-300">
+                            {ovi.english}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card className="border border-zinc-700 bg-zinc-900/70 shadow-none">
+                    <CardContent className="border-l-2 border-indigo-500 p-4">
+                      <p className="whitespace-pre-line text-zinc-300">
+                        {selectedSamasaContext.samasa.content || "samasa text not available yet."}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            ) : (
+              <p className="text-zinc-400">no matching samasa found.</p>
+            )}
+          </section>
+        </CardContent>
+      </Card>
     </div>
   );
 }

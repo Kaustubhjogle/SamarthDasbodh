@@ -76,6 +76,7 @@ export default function Home() {
   const [searchValue, setSearchValue] = useState("");
   const [selectedSamasaId, setSelectedSamasaId] = useState(defaultSelection.samasaId);
   const [openDashakId, setOpenDashakId] = useState(defaultSelection.dashakId);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") {
       return "dark";
@@ -145,11 +146,14 @@ export default function Home() {
     ? openDashakId
     : "";
   const activeDashakId = selectedSamasaContext?.dashakId ?? activeOpenDashakId;
+  const currentDashakLabel = selectedSamasaContext?.dashakTitle ?? "Dashak";
+  const currentSamasaTitle = selectedSamasaContext?.samasa.title ?? "समास";
+  const currentSamasaNumber = selectedSamasaContext?.samasa.number;
   const isDark = theme === "dark";
 
   return (
     <div
-      className={`h-screen overflow-hidden p-3 sm:p-5 ${
+      className={`h-screen overflow-hidden p-2 sm:p-5 ${
         isDark ? "bg-[#1c1c1f] text-zinc-100" : "bg-zinc-100 text-zinc-900"
       }`}
       style={{ fontSize: `${fontScale}%` }}
@@ -166,12 +170,40 @@ export default function Home() {
           <NavigationSidebar
             theme={theme}
             isSearchActive={searchValue.trim().length > 0}
+            isMobileNavOpen={isMobileNavOpen}
             filteredDashaks={filteredDashaks}
             searchValue={searchValue}
+            currentDashakLabel={currentDashakLabel}
+            currentSamasaTitle={currentSamasaTitle}
+            currentSamasaNumber={currentSamasaNumber}
+            mobileSettingsSlot={
+              <SettingsMenu
+                theme={theme}
+                fontScale={fontScale}
+                ovisPerCard={ovisPerCard}
+                compact
+                onThemeToggle={() =>
+                  setTheme((current) => (current === "dark" ? "light" : "dark"))
+                }
+                onIncreaseFont={() =>
+                  setFontScale((current) =>
+                    Math.min(MAX_FONT_SCALE, current + FONT_STEP)
+                  )
+                }
+                onDecreaseFont={() =>
+                  setFontScale((current) =>
+                    Math.max(MIN_FONT_SCALE, current - FONT_STEP)
+                  )
+                }
+                onSetOvisPerCard={setOvisPerCard}
+              />
+            }
             onSearchChange={handleSearchChange}
             activeDashakId={activeDashakId}
             activeOpenDashakId={activeOpenDashakId}
             activeSamasaId={activeSamasaId}
+            onToggleMobileNav={() => setIsMobileNavOpen((current) => !current)}
+            onCloseMobileNav={() => setIsMobileNavOpen(false)}
             onOpenDashak={(dashakId) => setOpenDashakId(dashakId)}
             onToggleDashak={(dashakId) =>
               setOpenDashakId((currentDashakId) =>
@@ -181,6 +213,7 @@ export default function Home() {
             onSelectSamasa={(dashakId, samasaId) => {
               setSelectedSamasaId(samasaId);
               setOpenDashakId(dashakId);
+              setIsMobileNavOpen(false);
             }}
           />
 

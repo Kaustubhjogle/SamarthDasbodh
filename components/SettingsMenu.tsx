@@ -8,6 +8,7 @@ type SettingsMenuProps = {
   theme: Theme;
   fontScale: number;
   ovisPerCard: 1 | 2;
+  compact?: boolean;
   onThemeToggle: () => void;
   onIncreaseFont: () => void;
   onDecreaseFont: () => void;
@@ -18,6 +19,7 @@ export default function SettingsMenu({
   theme,
   fontScale,
   ovisPerCard,
+  compact = false,
   onThemeToggle,
   onIncreaseFont,
   onDecreaseFont,
@@ -29,13 +31,13 @@ export default function SettingsMenu({
     <Dropdown>
       <Dropdown.Trigger
         aria-label="open settings"
-        className={`flex h-11 w-11 items-center justify-center rounded-full border transition ${
+        className={`flex items-center justify-center rounded-full border transition ${
           isDark
             ? "border-zinc-600 bg-zinc-800/90 text-zinc-100 hover:bg-zinc-700"
             : "border-zinc-300 bg-white/95 text-zinc-800 hover:bg-zinc-100"
-        }`}
+        } ${compact ? "h-9 w-9" : "h-11 w-11"}`}
       >
-        <span className="text-2xl leading-none">⚙</span>
+        <span className={`${compact ? "text-xl" : "text-2xl"} leading-none`}>⚙</span>
       </Dropdown.Trigger>
 
       <Dropdown.Popover

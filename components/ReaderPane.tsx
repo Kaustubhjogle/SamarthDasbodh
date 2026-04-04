@@ -25,21 +25,21 @@ export default function ReaderPane({
 
   if (!selectedSamasaContext) {
     return (
-      <section className="flex h-full min-h-0 flex-col overflow-hidden p-5 sm:p-7">
+      <section className="flex h-full min-h-0 flex-col overflow-hidden p-2 sm:p-7">
         <p className={isDark ? "text-zinc-400" : "text-zinc-600"}>no matching samasa found.</p>
       </section>
     );
   }
 
   return (
-    <section className="flex h-full min-h-0 flex-col overflow-hidden p-5 sm:p-7">
+    <section className="flex h-full min-h-0 flex-col overflow-hidden p-3 sm:p-7">
       <div className="flex min-h-0 flex-1 flex-col">
         <div
-          className={`sticky top-0 z-10 -mx-1 mb-4 rounded-xl px-1 pb-4 pt-1 backdrop-blur ${
+          className={`sticky top-0 z-10 -mx-1 mb-3 rounded-xl px-1 pb-1 pt-1 backdrop-blur md:mb-4 ${
             isDark ? "bg-[#232326]/95" : "bg-white/90"
           }`}
         >
-          <div className="mb-2 flex items-start justify-between gap-3">
+          <div className="mb-1 md:mb-2 flex items-start justify-between gap-3">
             <div
               className={`text-xl font-semibold ${isDark ? "text-zinc-300" : "text-zinc-700"}`}
             >
@@ -48,10 +48,10 @@ export default function ReaderPane({
                 {selectedSamasaContext.samasa.title}
               </span>
             </div>
-            {settingsSlot}
+            <div className="hidden md:block">{settingsSlot}</div>
           </div>
 
-          <div>
+          <div className="hidden md:block">
             <h1
               className={`font-[family-name:var(--font-manrope)] text-4xl font-bold ${
                 isDark ? "text-zinc-100" : "text-zinc-900"

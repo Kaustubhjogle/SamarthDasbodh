@@ -24,3 +24,29 @@ body {
   color: var(--foreground);
   font-family: "Manrope", "Segoe UI", sans-serif;
 }
+
+.stable-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.35) transparent;
+}
+
+.stable-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.stable-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stable-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.35);
+}
+
+.stable-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.35);
+}
+
+.stable-scrollbar::-webkit-scrollbar-thumb:active {
+  background: rgba(99, 102, 241, 0.35);
+}

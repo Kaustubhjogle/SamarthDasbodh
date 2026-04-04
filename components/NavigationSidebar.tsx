@@ -2,15 +2,16 @@
 
 import { Input } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import type { Dashak } from "@/app/types/dasbodh";
 import ScrollablePanel from "./ScrollablePanel";
 
 type NavigationSidebarProps = {
   theme: "dark" | "light";
+  isSearchActive: boolean;
   filteredDashaks: Dashak[];
   searchValue: string;
-  onSearchChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onSearchChange: (value: string) => void;
   activeDashakId: string;
   activeOpenDashakId: string;
   activeSamasaId: string;
@@ -21,6 +22,7 @@ type NavigationSidebarProps = {
 
 export default function NavigationSidebar({
   theme,
+  isSearchActive,
   filteredDashaks,
   searchValue,
   onSearchChange,
@@ -52,18 +54,28 @@ export default function NavigationSidebar({
       </div>
 
       <Input
+        key={theme}
         type="text"
         value={searchValue}
-        onChange={onSearchChange}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          onSearchChange(event.target.value)
+        }
+        onInput={(event: FormEvent<HTMLInputElement>) =>
+          onSearchChange(event.currentTarget.value)
+        }
         aria-label="search chapters"
         placeholder="Search chapters..."
-        className="mb-6 w-full rounded-full"
+        className={`sidebar-search mb-6 w-full rounded-xl ${
+          isDark ? "text-zinc-100" : "text-zinc-900"
+        }`}
       />
 
       <ScrollablePanel className="stable-scrollbar">
         <div className="space-y-5">
           {filteredDashaks.map((dashak) => {
-            const isOpen = activeOpenDashakId === dashak.id;
+            const isOpen = isSearchActive
+              ? dashak.samasas.length > 0
+              : activeOpenDashakId === dashak.id;
             const isActiveDashak = activeDashakId === dashak.id;
 
             return (
@@ -79,7 +91,11 @@ export default function NavigationSidebar({
               >
                 <button
                   type="button"
-                  onClick={() => onOpenDashak(dashak.id)}
+                  onClick={() => {
+                    if (!isSearchActive) {
+                      onOpenDashak(dashak.id);
+                    }
+                  }}
                   className={`mb-2 flex w-full items-center justify-between rounded-xl border px-2 py-1 text-left text-sm font-semibold uppercase tracking-[0.08em] transition ${
                     isActiveDashak
                       ? isDark
@@ -97,13 +113,17 @@ export default function NavigationSidebar({
                     aria-label={`${isOpen ? "Close" : "Open"} ${dashak.title}`}
                     onClick={(event) => {
                       event.stopPropagation();
-                      onToggleDashak(dashak.id);
+                      if (!isSearchActive) {
+                        onToggleDashak(dashak.id);
+                      }
                     }}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();
                         event.stopPropagation();
-                        onToggleDashak(dashak.id);
+                        if (!isSearchActive) {
+                          onToggleDashak(dashak.id);
+                        }
                       }
                     }}
                     className={`text-base transition-transform duration-300 ${

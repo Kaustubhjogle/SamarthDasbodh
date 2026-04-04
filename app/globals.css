@@ -50,3 +50,11 @@ body {
 .stable-scrollbar::-webkit-scrollbar-thumb:active {
   background: rgba(99, 102, 241, 0.35);
 }
+
+.sidebar-search input {
+  color: inherit !important;
+}
+
+.sidebar-search input::placeholder {
+  color: rgba(113, 113, 122, 0.9) !important;
+}

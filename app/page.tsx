@@ -2,12 +2,12 @@
 
 import { Card, CardContent } from "@heroui/react";
 import dashaksData from "./data/dashaks.json";
-import type { ChangeEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import NavigationSidebar from "@/components/NavigationSidebar";
 import ReaderPane from "@/components/ReaderPane";
 import SettingsMenu from "@/components/SettingsMenu";
 import type { Dashak, SelectedSamasaContext } from "@/app/types/dasbodh";
+import useDashakSearch from "@/components/useDashakSearch";
 
 const dashaks = dashaksData as Dashak[];
 type Theme = "dark" | "light";
@@ -115,37 +115,11 @@ export default function Home() {
     localStorage.setItem("dasbodh-ovis-per-card", String(ovisPerCard));
   }, [ovisPerCard]);
 
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
   };
 
-  const filteredDashaks = useMemo(() => {
-    const query = searchValue.trim().toLowerCase();
-
-    if (!query) {
-      return dashaks;
-    }
-
-    return dashaks
-      .map((dashak) => {
-        const matchingSamasas = dashak.samasas.filter((samasa) =>
-          samasa.title.toLowerCase().includes(query)
-        );
-        const dashakMatches = `${dashak.title} ${dashak.subtitle}`
-          .toLowerCase()
-          .includes(query);
-
-        if (!dashakMatches && matchingSamasas.length === 0) {
-          return null;
-        }
-
-        return {
-          ...dashak,
-          samasas: dashakMatches ? dashak.samasas : matchingSamasas,
-        };
-      })
-      .filter((dashak): dashak is Dashak => dashak !== null);
-  }, [searchValue]);
+  const filteredDashaks = useDashakSearch(dashaks, searchValue);
 
   const flatSamasas = filteredDashaks.flatMap((dashak) =>
     dashak.samasas.map((samasa) => ({
@@ -191,6 +165,7 @@ export default function Home() {
         <CardContent className="grid h-full p-0 md:grid-cols-[340px_1fr]">
           <NavigationSidebar
             theme={theme}
+            isSearchActive={searchValue.trim().length > 0}
             filteredDashaks={filteredDashaks}
             searchValue={searchValue}
             onSearchChange={handleSearchChange}

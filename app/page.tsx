@@ -77,7 +77,7 @@ export default function Home() {
   const [selectedSamasaId, setSelectedSamasaId] = useState(defaultSelection.samasaId);
   const [openDashakId, setOpenDashakId] = useState(defaultSelection.dashakId);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [theme, setTheme] = useState<Theme>("grey");
+  const [theme, setTheme] = useState<Theme>("light");
   const [fontScale, setFontScale] = useState<number>(100);
   const [ovisPerCard, setOvisPerCard] = useState<1 | 2>(1);
 

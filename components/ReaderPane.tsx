@@ -23,6 +23,18 @@ export default function ReaderPane({
   const isDark = theme === "dark";
   const isGrey = theme === "grey";
   const marathiFontSizeRem = (1.25 * fontScale) / 100;
+  const samasaOrdinals: Record<number, string> = {
+    1: "पहिला",
+    2: "दुसरा",
+    3: "तिसरा",
+    4: "चौथा",
+    5: "पाचवा",
+    6: "सहावा",
+    7: "सातवा",
+    8: "आठवा",
+    9: "नववा",
+    10: "दहावा",
+  };
 
   if (!selectedSamasaContext) {
     return (
@@ -72,6 +84,30 @@ export default function ReaderPane({
 
         {selectedSamasaContext.samasa.ovis.length > 0 ? (
           <ScrollablePanel className="space-y-4">
+            <Card
+              className={`rounded-xl border shadow-none ${
+                isDark
+                  ? "border-zinc-700 bg-zinc-900/70"
+                  : isGrey
+                    ? "border-zinc-600 bg-zinc-900/55"
+                    : "border-zinc-200 bg-white/90"
+              }`}
+            >
+              <CardContent
+                className={`rounded-xl border-l-2 p-4 ${
+                  isDark ? "border-indigo-500" : "border-indigo-400"
+                }`}
+              >
+                <p
+                  className={`whitespace-pre-line text-center text-lg leading-relaxed ${
+                    isDark || isGrey ? "text-zinc-100" : "text-zinc-900"
+                  }`}
+                >
+                  {`|| जय जय रघुवीर समर्थ ||\n|| श्रीमत् दासबोध ||\n|| ${selectedSamasaContext.dashakTitle} - ${selectedSamasaContext.dashakSubtitle} ||\n|| समास ${samasaOrdinals[selectedSamasaContext.samasa.number] ?? selectedSamasaContext.samasa.number} - ${selectedSamasaContext.samasa.title} ||\n|| श्री राम समर्थ ||`}
+                </p>
+              </CardContent>
+            </Card>
+
             {Array.from(
               { length: Math.ceil(selectedSamasaContext.samasa.ovis.length / ovisPerCard) },
               (_, chunkIndex) =>
@@ -136,29 +172,55 @@ export default function ReaderPane({
             ))}
           </ScrollablePanel>
         ) : (
-          <Card
-            className={`rounded-xl border shadow-none ${
-              isDark
-                ? "border-zinc-700 bg-zinc-900/70"
-                : isGrey
-                  ? "border-zinc-600 bg-zinc-900/55"
-                  : "border-zinc-200 bg-white/90"
-            }`}
-          >
-            <CardContent
-              className={`rounded-xl border-l-2 p-4 ${
-                isDark ? "border-indigo-500" : "border-indigo-400"
+          <ScrollablePanel className="space-y-4">
+            <Card
+              className={`rounded-xl border shadow-none ${
+                isDark
+                  ? "border-zinc-700 bg-zinc-900/70"
+                  : isGrey
+                    ? "border-zinc-600 bg-zinc-900/55"
+                    : "border-zinc-200 bg-white/90"
               }`}
             >
-              <p
-                className={`whitespace-pre-line ${
-                  isDark ? "text-zinc-300" : isGrey ? "text-zinc-300" : "text-zinc-700"
+              <CardContent
+                className={`rounded-xl border-l-2 p-4 ${
+                  isDark ? "border-indigo-500" : "border-indigo-400"
                 }`}
               >
-                {selectedSamasaContext.samasa.content || "samasa text not available yet."}
-              </p>
-            </CardContent>
-          </Card>
+                <p
+                  className={`whitespace-pre-line text-center text-lg leading-relaxed ${
+                    isDark || isGrey ? "text-zinc-100" : "text-zinc-900"
+                  }`}
+                >
+                  {`|| जय जय रघुवीर समर्थ ||\n|| श्रीमत् दासबोध ||\n|| ${selectedSamasaContext.dashakTitle} - ${selectedSamasaContext.dashakSubtitle} ||\n|| समास ${samasaOrdinals[selectedSamasaContext.samasa.number] ?? selectedSamasaContext.samasa.number} - ${selectedSamasaContext.samasa.title} ||\n|| श्री राम समर्थ ||`}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card
+              className={`rounded-xl border shadow-none ${
+                isDark
+                  ? "border-zinc-700 bg-zinc-900/70"
+                  : isGrey
+                    ? "border-zinc-600 bg-zinc-900/55"
+                    : "border-zinc-200 bg-white/90"
+              }`}
+            >
+              <CardContent
+                className={`rounded-xl border-l-2 p-4 ${
+                  isDark ? "border-indigo-500" : "border-indigo-400"
+                }`}
+              >
+                <p
+                  className={`whitespace-pre-line ${
+                    isDark ? "text-zinc-300" : isGrey ? "text-zinc-300" : "text-zinc-700"
+                  }`}
+                >
+                  {selectedSamasaContext.samasa.content || "samasa text not available yet."}
+                </p>
+              </CardContent>
+            </Card>
+          </ScrollablePanel>
         )}
       </div>
     </section>

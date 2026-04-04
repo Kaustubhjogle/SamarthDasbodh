@@ -2,7 +2,7 @@
 
 import { Dropdown } from "@heroui/react";
 
-type Theme = "dark" | "light";
+type Theme = "dark" | "light" | "grey";
 
 type SettingsMenuProps = {
   theme: Theme;
@@ -26,6 +26,8 @@ export default function SettingsMenu({
   onSetOvisPerCard,
 }: SettingsMenuProps) {
   const isDark = theme === "dark";
+  const isGrey = theme === "grey";
+  const themeLabel = theme === "dark" ? "Dark" : theme === "light" ? "Light" : "Grey";
 
   return (
     <Dropdown>
@@ -34,7 +36,9 @@ export default function SettingsMenu({
         className={`flex items-center justify-center rounded-full border transition ${
           isDark
             ? "border-zinc-600 bg-zinc-800/90 text-zinc-100 hover:bg-zinc-700"
-            : "border-zinc-300 bg-white/95 text-zinc-800 hover:bg-zinc-100"
+            : isGrey
+              ? "border-zinc-600 bg-zinc-700/80 text-zinc-100 hover:bg-zinc-600"
+              : "border-zinc-300 bg-white/95 text-zinc-800 hover:bg-zinc-100"
         } ${compact ? "h-9 w-9" : "h-11 w-11"}`}
       >
         <span className={`${compact ? "text-xl" : "text-2xl"} leading-none`}>⚙</span>
@@ -45,7 +49,9 @@ export default function SettingsMenu({
         className={`min-w-[12rem] rounded-xl border p-1 shadow-xl ${
           isDark
             ? "border-zinc-700 bg-zinc-900/95"
-            : "border-zinc-200 bg-white/95"
+            : isGrey
+              ? "border-zinc-600 bg-zinc-800/95"
+              : "border-zinc-200 bg-white/95"
         }`}
       >
         <div className="space-y-1 p-1">
@@ -55,15 +61,17 @@ export default function SettingsMenu({
             className={`w-full rounded-md px-2 py-1.5 text-left text-sm transition ${
               isDark
                 ? "text-zinc-100 hover:bg-zinc-800"
-                : "text-zinc-800 hover:bg-zinc-100"
+                : isGrey
+                  ? "text-zinc-100 hover:bg-zinc-700"
+                  : "text-zinc-800 hover:bg-zinc-100"
             }`}
           >
-            {isDark ? "Switch to light mode" : "Switch to dark mode"}
+            {`Theme: ${themeLabel} (tap to change)`}
           </button>
 
           <div
             className={`flex items-center justify-between rounded-md px-2 py-1.5 ${
-              isDark ? "text-zinc-300" : "text-zinc-700"
+              isDark ? "text-zinc-300" : isGrey ? "text-zinc-300" : "text-zinc-700"
             }`}
           >
             <span className="text-xs">{`Font: ${fontScale}%`}</span>
@@ -75,7 +83,9 @@ export default function SettingsMenu({
                 className={`h-7 w-7 rounded-md text-sm font-semibold transition ${
                   isDark
                     ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700"
-                    : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                    : isGrey
+                      ? "bg-zinc-700 text-zinc-100 hover:bg-zinc-600"
+                      : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 }`}
               >
                 -
@@ -87,7 +97,9 @@ export default function SettingsMenu({
                 className={`h-7 w-7 rounded-md text-sm font-semibold transition ${
                   isDark
                     ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700"
-                    : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                    : isGrey
+                      ? "bg-zinc-700 text-zinc-100 hover:bg-zinc-600"
+                      : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 }`}
               >
                 +
@@ -97,7 +109,7 @@ export default function SettingsMenu({
 
           <div
             className={`flex items-center justify-between rounded-md px-2 py-1.5 ${
-              isDark ? "text-zinc-300" : "text-zinc-700"
+              isDark ? "text-zinc-300" : isGrey ? "text-zinc-300" : "text-zinc-700"
             }`}
           >
             <span className="text-xs">Ovis per card</span>
@@ -111,7 +123,9 @@ export default function SettingsMenu({
                     ? "bg-indigo-500 text-white"
                     : isDark
                       ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700"
-                      : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                      : isGrey
+                        ? "bg-zinc-700 text-zinc-100 hover:bg-zinc-600"
+                        : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 }`}
               >
                 1
@@ -125,7 +139,9 @@ export default function SettingsMenu({
                     ? "bg-indigo-500 text-white"
                     : isDark
                       ? "bg-zinc-800 text-zinc-100 hover:bg-zinc-700"
-                      : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+                      : isGrey
+                        ? "bg-zinc-700 text-zinc-100 hover:bg-zinc-600"
+                        : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
                 }`}
               >
                 2

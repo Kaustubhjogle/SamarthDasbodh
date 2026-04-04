@@ -7,7 +7,7 @@ import type { Dashak } from "@/app/types/dasbodh";
 import ScrollablePanel from "./ScrollablePanel";
 
 type NavigationSidebarProps = {
-  theme: "dark" | "light";
+  theme: "dark" | "light" | "grey";
   isSearchActive: boolean;
   isMobileNavOpen: boolean;
   filteredDashaks: Dashak[];
@@ -48,6 +48,7 @@ export default function NavigationSidebar({
   onSelectSamasa,
 }: NavigationSidebarProps) {
   const isDark = theme === "dark";
+  const isGrey = theme === "grey";
   const dashakList = (
     <div className="space-y-5">
       {filteredDashaks.map((dashak) => {
@@ -64,7 +65,9 @@ export default function NavigationSidebar({
                 ? "bg-indigo-500/10 ring-1 ring-indigo-400/30"
                 : isDark
                   ? "bg-transparent"
-                  : "bg-white/30"
+                  : isGrey
+                    ? "bg-zinc-800/25"
+                    : "bg-white/30"
             }`}
           >
             <button
@@ -81,7 +84,9 @@ export default function NavigationSidebar({
                     : "border-indigo-300 bg-indigo-50 text-indigo-700"
                   : isDark
                     ? "border-transparent text-zinc-400 hover:border-zinc-700 hover:bg-zinc-800/50 hover:text-zinc-200"
-                    : "border-transparent text-zinc-600 hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900"
+                    : isGrey
+                      ? "border-transparent text-zinc-300 hover:border-zinc-600 hover:bg-zinc-700/60 hover:text-zinc-100"
+                      : "border-transparent text-zinc-600 hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-900"
               }`}
             >
               <span>{`${dashak.title} ${dashak.number} - ${dashak.subtitle}`}</span>
@@ -128,7 +133,9 @@ export default function NavigationSidebar({
                         ? "bg-indigo-500/10 ring-1 ring-indigo-300/20"
                         : isDark
                           ? "bg-zinc-900/20"
-                          : "bg-zinc-100/70"
+                          : isGrey
+                            ? "bg-zinc-900/25"
+                            : "bg-zinc-100/70"
                     }`}
                   >
                     {dashak.samasas.map((samasa) => {
@@ -144,7 +151,9 @@ export default function NavigationSidebar({
                               ? "bg-indigo-100 text-indigo-700"
                               : isDark
                                 ? "text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
-                                : "text-zinc-700 hover:bg-zinc-200 hover:text-zinc-900"
+                                : isGrey
+                                  ? "text-zinc-300 hover:bg-zinc-700 hover:text-zinc-100"
+                                  : "text-zinc-700 hover:bg-zinc-200 hover:text-zinc-900"
                           }`}
                         >
                           <span className="font-semibold">{`समास ${samasa.number} - ${samasa.title} ( ड )`}</span>
@@ -166,19 +175,21 @@ export default function NavigationSidebar({
       className={`flex h-full min-h-0 flex-col border-b p-4 md:border-r md:border-b-0 md:p-5 ${
         isDark
           ? "border-zinc-700/80 bg-[#252529]"
-          : "border-zinc-200/90 bg-zinc-50"
+          : isGrey
+            ? "border-zinc-600/90 bg-[#2f3034]"
+            : "border-zinc-200/90 bg-zinc-50"
       } group`}
     >
       <div className="mb-4 md:mb-5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold leading-none tracking-tight">
-              <span className={isDark ? "text-indigo-400" : "text-indigo-600"}>Bodh</span>
-              <span className={isDark ? "text-zinc-100" : "text-zinc-900"}>alay</span>
+              <span className={isDark || isGrey ? "text-indigo-400" : "text-indigo-600"}>Srimath</span>
+              <span className={isDark || isGrey ? "text-zinc-100" : "text-zinc-900"}>Dashbodh</span>
             </p>
-            <p className={`mt-1 text-base ${isDark ? "text-zinc-400" : "text-zinc-500"}`}>
+            {/* <p className={`mt-1 text-base ${isDark ? "text-zinc-400" : isGrey ? "text-zinc-400" : "text-zinc-500"}`}>
               Srimath Dasbodh
-            </p>
+            </p> */}
           </div>
           {mobileSettingsSlot ? <div className="md:hidden">{mobileSettingsSlot}</div> : null}
         </div>
@@ -197,7 +208,7 @@ export default function NavigationSidebar({
         aria-label="search chapters"
         placeholder="Search chapters..."
         className={`sidebar-search mb-4 w-full rounded-xl md:mb-6 ${
-          isDark ? "text-zinc-100" : "text-zinc-900"
+          isDark || isGrey ? "text-zinc-100" : "text-zinc-900"
         }`}
       />
 
@@ -208,7 +219,9 @@ export default function NavigationSidebar({
           className={`peer w-full rounded-full border px-3 py-2 text-lg font-semibold ${
             isDark
               ? "border-indigo-400/40 bg-indigo-500/15 text-zinc-200"
-              : "border-indigo-300 bg-indigo-50 text-indigo-700"
+              : isGrey
+                ? "border-indigo-300/50 bg-indigo-500/12 text-zinc-100"
+                : "border-indigo-300 bg-indigo-50 text-indigo-700"
           }`}
         >
           {`${currentDashakLabel} \\ ${currentSamasaTitle}${
@@ -248,18 +261,24 @@ export default function NavigationSidebar({
               className={`absolute inset-x-3 top-20 bottom-6 flex flex-col overflow-hidden rounded-2xl border p-4 ${
                 isDark
                   ? "border-zinc-700 bg-[#252529]"
-                  : "border-zinc-200 bg-white"
+                  : isGrey
+                    ? "border-zinc-600 bg-[#2f3034]"
+                    : "border-zinc-200 bg-white"
               }`}
             >
               <div className="mb-3 flex items-center justify-between">
-                <p className={`text-sm font-semibold ${isDark ? "text-zinc-200" : "text-zinc-700"}`}>
+                <p className={`text-sm font-semibold ${isDark || isGrey ? "text-zinc-200" : "text-zinc-700"}`}>
                   Navigation
                 </p>
                 <button
                   type="button"
                   onClick={onCloseMobileNav}
                   className={`rounded-lg px-2 py-1 text-sm ${
-                    isDark ? "text-zinc-300 hover:bg-zinc-800" : "text-zinc-700 hover:bg-zinc-100"
+                    isDark
+                      ? "text-zinc-300 hover:bg-zinc-800"
+                    : isGrey
+                        ? "text-zinc-300 hover:bg-zinc-700"
+                        : "text-zinc-700 hover:bg-zinc-100"
                   }`}
                 >
                   Close

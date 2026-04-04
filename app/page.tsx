@@ -10,7 +10,7 @@ import type { Dashak, SelectedSamasaContext } from "@/app/types/dasbodh";
 import useDashakSearch from "@/components/useDashakSearch";
 
 const dashaks = dashaksData as Dashak[];
-type Theme = "dark" | "light";
+type Theme = "dark" | "light" | "grey";
 const MIN_FONT_SCALE = 80;
 const MAX_FONT_SCALE = 130;
 const FONT_STEP = 10;
@@ -77,34 +77,24 @@ export default function Home() {
   const [selectedSamasaId, setSelectedSamasaId] = useState(defaultSelection.samasaId);
   const [openDashakId, setOpenDashakId] = useState(defaultSelection.dashakId);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === "undefined") {
-      return "dark";
-    }
+  const [theme, setTheme] = useState<Theme>("grey");
+  const [fontScale, setFontScale] = useState<number>(100);
+  const [ovisPerCard, setOvisPerCard] = useState<1 | 2>(1);
 
+  useEffect(() => {
     const savedTheme = localStorage.getItem("dasbodh-theme");
-    return savedTheme === "light" ? "light" : "dark";
-  });
-  const [fontScale, setFontScale] = useState<number>(() => {
-    if (typeof window === "undefined") {
-      return 100;
+    if (savedTheme === "light" || savedTheme === "dark" || savedTheme === "grey") {
+      setTheme(savedTheme);
     }
 
     const savedFontScale = Number(localStorage.getItem("dasbodh-font-scale") ?? "100");
-    if (Number.isNaN(savedFontScale)) {
-      return 100;
-    }
-
-    return Math.min(MAX_FONT_SCALE, Math.max(MIN_FONT_SCALE, savedFontScale));
-  });
-  const [ovisPerCard, setOvisPerCard] = useState<1 | 2>(() => {
-    if (typeof window === "undefined") {
-      return 1;
+    if (!Number.isNaN(savedFontScale)) {
+      setFontScale(Math.min(MAX_FONT_SCALE, Math.max(MIN_FONT_SCALE, savedFontScale)));
     }
 
     const savedOvisPerCard = Number(localStorage.getItem("dasbodh-ovis-per-card") ?? "2");
-    return savedOvisPerCard === 2 ? 2 : 1;
-  });
+    setOvisPerCard(savedOvisPerCard === 2 ? 2 : 1);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("dasbodh-theme", theme);
@@ -150,11 +140,21 @@ export default function Home() {
   const currentSamasaTitle = selectedSamasaContext?.samasa.title ?? "समास";
   const currentSamasaNumber = selectedSamasaContext?.samasa.number;
   const isDark = theme === "dark";
+  const isGrey = theme === "grey";
+  const cycleTheme = () => {
+    setTheme((current) =>
+      current === "grey" ? "dark" : current === "dark" ? "light" : "grey"
+    );
+  };
 
   return (
     <div
       className={`h-screen overflow-hidden p-2 sm:p-5 ${
-        isDark ? "bg-[#1c1c1f] text-zinc-100" : "bg-zinc-100 text-zinc-900"
+        isDark
+          ? "bg-[#1c1c1f] text-zinc-100"
+          : isGrey
+            ? "bg-[#222327] text-zinc-100"
+            : "bg-zinc-100 text-zinc-900"
       }`}
       style={{ fontSize: `${fontScale}%` }}
     >
@@ -163,7 +163,9 @@ export default function Home() {
         className={`h-full w-full overflow-hidden rounded-[28px] border shadow-[0_16px_50px_rgba(0,0,0,0.18)] ${
           isDark
             ? "border-zinc-700/70 bg-[#232326]"
-            : "border-zinc-300/90 bg-white"
+            : isGrey
+              ? "border-zinc-600/80 bg-[#2c2d31]"
+              : "border-zinc-300/90 bg-white"
         }`}
       >
         <CardContent className="grid h-full p-0 md:grid-cols-[340px_1fr]">
@@ -182,9 +184,7 @@ export default function Home() {
                 fontScale={fontScale}
                 ovisPerCard={ovisPerCard}
                 compact
-                onThemeToggle={() =>
-                  setTheme((current) => (current === "dark" ? "light" : "dark"))
-                }
+                onThemeToggle={cycleTheme}
                 onIncreaseFont={() =>
                   setFontScale((current) =>
                     Math.min(MAX_FONT_SCALE, current + FONT_STEP)
@@ -227,9 +227,7 @@ export default function Home() {
                 theme={theme}
                 fontScale={fontScale}
                 ovisPerCard={ovisPerCard}
-                onThemeToggle={() =>
-                  setTheme((current) => (current === "dark" ? "light" : "dark"))
-                }
+                onThemeToggle={cycleTheme}
                 onIncreaseFont={() =>
                   setFontScale((current) =>
                     Math.min(MAX_FONT_SCALE, current + FONT_STEP)

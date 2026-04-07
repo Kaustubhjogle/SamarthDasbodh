@@ -10,7 +10,7 @@ A modern, minimal, spiritual reading web app for **Srimath Dasbodh** with Dashak
 
 ![Srimath Dasbodh Website Mockup](./public/website_mockup.png)
 
-**[Live Demo →](https://samarth-dasbodh.vercel.app/)**
+**[Live Demo →](https://srimath-dasbodh.vercel.app/)**
 
 </div>
 
